@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon AJAX</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Get Pokemons!</h1>
+    <!-- <button type="button" id="button" onclick="fetchData()">Start!</button> -->
+    <!-- <div id="pokemon" style="background-color: yellow; width: 10%; text-align: center; margin-left: 25px; padding:0 20px 0 20px"></div> -->
+    <button type="button" id="button" onclick="getData()">Get!</button>
+    <div id="pokemon"></div>
+    <script>
+        // async function fetchData(){
+        //     const response = await fetch("https://pokeapi.co/api/v2/pokemon/pikachu", {
+        //         method: "GET"
+        //     })
+        //     const json = await response.json();
+        //     const name = json.name;
+        //     const id = json.id
+        //     const sprites = json.sprites
+        //     const types = json.types
+        //     let data = "";
+        //     data = data + `<p style="padding-top:20px">${id}: ${name}</p><img src=${sprites.front_default}><p style="padding-bottom:20px">type: ${types[0].type.name}</p>`
+        //     document.getElementById("pokemon").innerHTML = data;
+        // }
+        async function getData(){
+            const response = await fetch("https://pokeapi.co/api/v2/pokemon?limit=30", {method: "GET"});
+            const json = await response.json();
+            const results = json.results;
+            const sprite = json.sprite
+            let data = "";
+            let x = 1;
+            for(let i = 0; i < results.length; i++){
+                getPoke(results[i].url, x)
+                x++
+            }
+        }
+        async function getPoke(url, x){
+            const res = await fetch(url, {method: "GET"});
+            const json = await res.json();
+            const id = json.id;
+            const name = json.name;
+            const types = json.types;
+            const sprites = json.sprites;
+            switch (types[0].type.name) {
+                case "grass":
+                    bgcolor = "green";
+                    break;
+                case "fire":
+                    bgcolor = "orange";
+                    break;
+                case "water":
+                    bgcolor = "blue";
+                    break;
+                case "bug":
+                    bgcolor = "grey";
+                    break;
+                case "electric":
+                    bgcolor = "yellow";
+                    break;
+                case "ground":
+                    bgcolor = "beige";
+                    break;
+                case "normal":
+                    bgcolor = "lightgray";
+                    break;
+                case "poison":
+                    bgcolor = "violet";
+                    break;
+                default:
+                    bgcolor = "white";
+                    break;
+            }
+            let poke = "";
+            poke = poke + `<div class="pokemons" style="background-color: ${bgcolor};"><p style="padding-top: 20px;">${id}: ${name}</p><img src=${sprites.front_default}><p style="padding-bottom: 20px;">type: ${types[0].type.name}</p></div>`
+            const element = document.createElement("div");
+            element.innerHTML = poke;
+            document.getElementById("pokemon").append(element)
+        }
+    </script>
+</body>
+</html>
